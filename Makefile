@@ -14,9 +14,10 @@ all: run
 
 init:
 	go mod init github.com/samirgadkari/persistLogs
-	cobra init
-	cobra add serve
-	go mod tidy
+	go get github.com/samirgadkari/sidecar
+	mkdir cli
+	cd cli && cobra init
+	cd cli && cobra add serve
 
 ${EXEDIR}:
 	mkdir ${EXEDIR}
