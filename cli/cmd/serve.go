@@ -26,6 +26,12 @@ the message queue and write them into a database.`,
 		if err != nil {
 			return
 		}
+
+		logMsgTest := "Persist sending test log message."
+		err = sidecar.Log(&logMsgTest)
+		if err != nil {
+			return
+		}
 	},
 }
 

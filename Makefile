@@ -3,15 +3,6 @@ SHELL := /bin/bash
 EXEDIR := ./bin
 BIN_NAME=./bin/persist
 
-LATESTVER_WITH_UPDATE := "$(shell go list -m -u github.com/samirgadkari/sidecar | rg '.*?\s+.*?\s+\[(v.*?)\]$$' --replace '$$1')"
-UPDATED_LATESTVER := "$(shell go list -m -u github.com/samirgadkari/sidecar | rg '.*?\s+(v.*?)$$' --replace '$$1')"
-
-ifeq ($(strip $(LATESTVER_WITH_UPDATE)), "")
-	LATESTVER := $(UPDATED_LATESTVER)
-else
-	LATESTVER := $(LATESTVER_WITH_UPDATE)
-endif
-
 # The .PHONY target will ignore any file that exists with the same name as the target
 # in your makefile, and built it regardless.
 .PHONY: all init build run clean
@@ -24,18 +15,30 @@ printvars:
 	@echo $(UPDATED_LATESTVER)
 	@echo $(LATESTVER)
 
-init:
-	go mod init github.com/samirgadkari/persist
-	go get github.com/samirgadkari/sidecar@$(LATESTVER)
+cli:
 	mkdir cli
 	cd cli && cobra init
 	cd cli && cobra add serve
 
+init: | cli
+	go mod init github.com/samirgadkari/persist
+	go mod tidy
+	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
+	go mod tidy
+
 ${EXEDIR}:
 	mkdir ${EXEDIR}
 
+# Best way to keep track of your dependencies with your own repos are to get the modules
+# from your own directory. This way, you update the source module, check it into github,
+# but access it locally. To do this, issue the following commands:
+#   go mod edit -replace=github.com/samirgadkari/sidecar@v0.0.0-unpublished=../sidecar
+#   go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
+# This will get the repo from ../sidecar, and use it as if it is the latest version of
+# github.com/samirgadkari/sidecar
+
 build: | ${EXEDIR}
-	go get github.com/samirgadkari/sidecar@$(LATESTVER)
+	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
 	go build -o ${BIN_NAME} cli/main.go
 
 run: build
