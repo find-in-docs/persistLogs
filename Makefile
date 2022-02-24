@@ -10,11 +10,6 @@ BIN_NAME=./bin/persist
 # The all target is the default target when make is called without any arguments.
 all: clean | run
 
-printvars:
-	@echo "$(LATESTVER_WITH_UPDATE)"
-	@echo $(UPDATED_LATESTVER)
-	@echo $(LATESTVER)
-
 cli:
 	mkdir cli
 	cd cli && cobra init
