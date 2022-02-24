@@ -43,5 +43,5 @@ clean:
 	go clean
 	rm ${BIN_NAME}
 	go clean -cache -modcache -i -r
-	go get github.com/samirgadkari/sidecar@$(LATESTVER)
+	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
 	go mod tidy
