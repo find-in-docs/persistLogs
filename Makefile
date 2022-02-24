@@ -1,7 +1,7 @@
 # This makes sure the commands are run within a BASH shell.
 SHELL := /bin/bash
 EXEDIR := ./bin
-BIN_NAME=./bin/persistLogs
+BIN_NAME=./bin/persist
 
 LATESTVER_WITH_UPDATE := "$(shell go list -m -u github.com/samirgadkari/sidecar | rg '.*?\s+.*?\s+\[(v.*?)\]$$' --replace '$$1')"
 UPDATED_LATESTVER := "$(shell go list -m -u github.com/samirgadkari/sidecar | rg '.*?\s+(v.*?)$$' --replace '$$1')"
@@ -25,8 +25,8 @@ printvars:
 	@echo $(LATESTVER)
 
 init:
-	go mod init github.com/samirgadkari/persistLogs
-	go get github.com/samirgadkari/sidecar
+	go mod init github.com/samirgadkari/persist
+	go get github.com/samirgadkari/sidecar@$(LATESTVER)
 	mkdir cli
 	cd cli && cobra init
 	cd cli && cobra add serve

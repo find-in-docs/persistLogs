@@ -11,7 +11,7 @@ func LoadConfig() {
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("$HOME/.sidecar")
+	viper.AddConfigPath("$HOME/.persist")
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
