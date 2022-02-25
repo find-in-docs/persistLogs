@@ -32,6 +32,12 @@ the message queue and write them into a database.`,
 		if err != nil {
 			return
 		}
+
+		pubMsgTest := []byte("Persist sending test pub message.")
+		err = sidecar.Pub("topic-1", pubMsgTest)
+		if err != nil {
+			return
+		}
 	},
 }
 
