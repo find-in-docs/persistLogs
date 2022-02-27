@@ -5,6 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/samirgadkari/persist/pkg/config"
 	"github.com/samirgadkari/sidecar/pkg/client"
 	"github.com/spf13/cobra"
@@ -33,16 +36,30 @@ the message queue and write them into a database.`,
 			return
 		}
 
-		err = sidecar.Sub("topic-1")
+		err = sidecar.Sub("search.v1.*")
 		if err != nil {
 			return
 		}
 
+		go func() {
+			for {
+				subTopicRsp, err := sidecar.Recv()
+				if err != nil {
+					fmt.Printf("Error receiving from sidecar: %#v\n", err)
+					break
+				}
+
+				fmt.Printf("Received from sidecar: \n\t%#v\n", subTopicRsp)
+			}
+		}()
+
 		pubMsgTest := []byte("Persist sending test pub message.")
-		err = sidecar.Pub("topic-1", pubMsgTest)
+		err = sidecar.Pub("search.v1.test", pubMsgTest)
 		if err != nil {
 			return
 		}
+
+		time.Sleep(3 * time.Second)
 	},
 }
 
