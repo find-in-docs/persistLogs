@@ -1,17 +1,10 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/samirgadkari/persist/pkg/config"
-	"github.com/samirgadkari/sidecar/pkg/client"
+	"github.com/samirgadkari/persist/pkg/conn"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // serveCmd represents the serve command
@@ -22,44 +15,22 @@ var serveCmd = &cobra.Command{
 the message queue and write them into a database.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		config.LoadConfig()
+		sidecar := conn.InitSidecar()
 
-		sidecarServiceAddr := viper.GetString("sidecarServiceAddr")
-		_, sidecar, err := client.Connect(sidecarServiceAddr)
+		err := sidecar.Sub("search.v1.*")
 		if err != nil {
 			return
 		}
 
-		logMsgTest := "Persist sending test log message."
-		err = sidecar.Log(&logMsgTest)
-		if err != nil {
-			return
-		}
-
-		err = sidecar.Sub("search.v1.*")
-		if err != nil {
-			return
-		}
-
-		go func() {
-			for {
-				subTopicRsp, err := sidecar.Recv()
-				if err != nil {
-					fmt.Printf("Error receiving from sidecar: %#v\n", err)
-					break
-				}
-
-				fmt.Printf("Received from sidecar: \n\t%#v\n", subTopicRsp)
+		for {
+			subTopicRsp, err := sidecar.Recv()
+			if err != nil {
+				fmt.Printf("Error receiving from sidecar: %#v\n", err)
+				break
 			}
-		}()
 
-		pubMsgTest := []byte("Persist sending test pub message.")
-		err = sidecar.Pub("search.v1.test", pubMsgTest)
-		if err != nil {
-			return
+			fmt.Printf("Received from sidecar: \n\t%#v\n", subTopicRsp)
 		}
-
-		time.Sleep(3 * time.Second)
 	},
 }
 
