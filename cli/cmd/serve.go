@@ -3,7 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/samirgadkari/persist/pkg/conn"
+	"github.com/samirgadkari/sidecar/pkg/client"
+	"github.com/samirgadkari/sidecar/protos/v1/messages"
 	"github.com/spf13/cobra"
 )
 
@@ -19,21 +20,15 @@ var serveCmd = &cobra.Command{
 the message queue and write them into a database.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		sidecar := conn.InitSidecar("persist")
+		sidecar := client.InitSidecar("persist")
 
-		err := sidecar.Sub("search.v1.*", allTopicsRecvChanSize)
-		if err != nil {
-			return
-		}
+		topic := "search.v1.*"
+		if err := sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *messages.SubTopicResponse) {
 
-		for {
-			subTopicRsp, err := sidecar.Recv("search.v1.*")
-			if err != nil {
-				sidecar.Log("Error receiving from sidecar: %#v\n", err)
-				break
-			}
-
-			fmt.Printf("Received from sidecar: \n\t%#v\n", subTopicRsp)
+			fmt.Printf("Received from sidecar: \n\t%v\n", m)
+		}); err != nil {
+			fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
+				topic, err)
 		}
 	},
 }
