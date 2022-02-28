@@ -13,7 +13,7 @@ var serveCmd = &cobra.Command{
 the message queue and write them into a database.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		sidecar := conn.InitSidecar()
+		sidecar := conn.InitSidecar("persist")
 
 		err := sidecar.Sub("search.v1.*")
 		if err != nil {
