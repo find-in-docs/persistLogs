@@ -23,13 +23,18 @@ the message queue and write them into a database.`,
 		sidecar := client.InitSidecar("persist")
 
 		topic := "search.v1.*"
-		if err := sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *messages.SubTopicResponse) {
+		go func() {
+			if err := sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *messages.SubTopicResponse) {
 
-			fmt.Printf("Received from sidecar: \n\t%v\n", m)
-		}); err != nil {
-			fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
-				topic, err)
-		}
+				fmt.Printf("Received from sidecar: \n\t%v\n", m)
+			}); err != nil {
+				fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
+					topic, err)
+			}
+		}()
+
+		sidecar.Log("Persist sending log message test: %s\n", topic)
+		select {} // This will wait forever
 	},
 }
 
