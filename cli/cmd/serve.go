@@ -7,6 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	allTopicsRecvChanSize = 32
+)
+
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "serve",
@@ -17,13 +21,13 @@ the message queue and write them into a database.`,
 
 		sidecar := conn.InitSidecar("persist")
 
-		err := sidecar.Sub("search.v1.*")
+		err := sidecar.Sub("search.v1.*", allTopicsRecvChanSize)
 		if err != nil {
 			return
 		}
 
 		for {
-			subTopicRsp, err := sidecar.Recv()
+			subTopicRsp, err := sidecar.Recv("search.v1.*")
 			if err != nil {
 				sidecar.Log("Error receiving from sidecar: %#v\n", err)
 				break
