@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/samirgadkari/persist/pkg/conn"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +29,7 @@ the message queue and write them into a database.`,
 				break
 			}
 
-			sidecar.Log("Received from sidecar: \n\t%#v\n", subTopicRsp)
+			fmt.Printf("Received from sidecar: \n\t%#v\n", subTopicRsp)
 		}
 	},
 }
