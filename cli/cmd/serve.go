@@ -1,11 +1,15 @@
 package cmd
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"time"
 
+	"github.com/samirgadkari/persist/pkg/config"
+	"github.com/samirgadkari/persist/pkg/data"
 	"github.com/samirgadkari/sidecar/pkg/client"
-	"github.com/samirgadkari/sidecar/protos/v1/messages"
+	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
 	"github.com/spf13/cobra"
 )
 
@@ -21,13 +25,37 @@ var serveCmd = &cobra.Command{
 the message queue and write them into a database.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		sidecar := client.InitSidecar("persist")
+		config.Load()
+
+		// Setup database
+		db, err := data.DBConnect()
+		if err != nil {
+			return
+		}
+
+		tableName := "persist"
+		err = db.CreateTable(tableName)
+		if err != nil {
+			return
+		}
+
+		sidecar := client.InitSidecar(tableName)
 
 		topic := "search.v1.*"
+		buf := &bytes.Buffer{}
+		enc := gob.NewEncoder(buf)
+
 		go func() {
-			if err := sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *messages.SubTopicResponse) {
+			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
 				fmt.Printf("Received from sidecar: \n\t%v\n", m)
+
+				err = enc.Encode(*m)
+				if err != nil {
+					fmt.Printf("Error converting message to Big Endian: \n\terror: %v\n", err)
+				}
+
+				db.StoreData(m.Header, buf, tableName)
 			}); err != nil {
 				fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
 					topic, err)
