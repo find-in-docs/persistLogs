@@ -36,9 +36,9 @@ func DBConnect() (*DB, error) {
 	}
 
 	persistSchema := `(msgType integer,
-			srcServType varchar(32),
-			dstServType varchar(32),
-			servId varchar(128),
+			srcServType varchar(16),
+			dstServType varchar(16),
+			servId varchar(36),
 			msgId integer,
 			bytes bytea)`
 
