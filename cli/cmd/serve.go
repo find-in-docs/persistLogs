@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/samirgadkari/sidecar/pkg/client"
 	"github.com/samirgadkari/sidecar/protos/v1/messages"
@@ -34,6 +35,8 @@ the message queue and write them into a database.`,
 		}()
 
 		sidecar.Log("Persist sending log message test: %s\n", topic)
+		time.Sleep(3 * time.Second)
+		sidecar.Unsub(topic)
 		select {} // This will wait forever
 	},
 }
