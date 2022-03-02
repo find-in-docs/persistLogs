@@ -17,6 +17,7 @@ cli:
 
 init: | cli
 	go mod init github.com/samirgadkari/persist
+	go mod edit -replace=github.com/samirgadkari/sidecar@v0.0.0-unpublished=../sidecar
 	go mod tidy
 	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
 	go mod tidy
