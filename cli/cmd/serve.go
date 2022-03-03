@@ -63,7 +63,7 @@ the message queue and write them into a database.`,
 			}
 		}()
 
-		sidecar.Log("Persist sending log message test: %s\n", "search.v1.log")
+		sidecar.Log("Persist sending log message test: %s", "search.v1.log")
 		time.Sleep(3 * time.Second)
 		sidecar.Unsub(topic)
 		select {} // This will wait forever
