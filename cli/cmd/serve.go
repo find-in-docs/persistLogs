@@ -9,6 +9,7 @@ import (
 	"github.com/samirgadkari/persist/pkg/config"
 	"github.com/samirgadkari/persist/pkg/data"
 	"github.com/samirgadkari/sidecar/pkg/client"
+	scconn "github.com/samirgadkari/sidecar/pkg/conn"
 	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
 	"github.com/spf13/cobra"
 )
@@ -48,7 +49,7 @@ the message queue and write them into a database.`,
 		go func() {
 			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
-				fmt.Printf("Received from sidecar: \n\t%v\n", m)
+				scconn.PrintSubTopicRsp("Received from sidecar:", m)
 
 				err = enc.Encode(*m)
 				if err != nil {
