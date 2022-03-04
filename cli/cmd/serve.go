@@ -9,7 +9,6 @@ import (
 	"github.com/samirgadkari/persist/pkg/config"
 	"github.com/samirgadkari/persist/pkg/data"
 	"github.com/samirgadkari/sidecar/pkg/client"
-	scconn "github.com/samirgadkari/sidecar/pkg/conn"
 	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +48,7 @@ the message queue and write them into a database.`,
 		go func() {
 			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
-				scconn.PrintSubTopicRsp("Received from sidecar:", m)
+				fmt.Printf("Received from sidecar:\n\t%s", m.String())
 
 				err = enc.Encode(*m)
 				if err != nil {
@@ -63,7 +62,7 @@ the message queue and write them into a database.`,
 			}
 		}()
 
-		sidecar.Log("Persist sending log message test: %s", "search.v1.log")
+		sidecar.Logger.Log("Persist sending log message test: %s\n", "search.v1.log")
 		time.Sleep(3 * time.Second)
 		sidecar.Unsub(topic)
 		select {} // This will wait forever
