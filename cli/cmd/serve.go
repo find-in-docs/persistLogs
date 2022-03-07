@@ -41,7 +41,7 @@ the message queue and write them into a database.`,
 
 		sidecar := client.InitSidecar(tableName)
 
-		topic := "search.v1.*"
+		topic := "search.*.v1"
 		buf := &bytes.Buffer{}
 		enc := gob.NewEncoder(buf)
 
@@ -62,7 +62,7 @@ the message queue and write them into a database.`,
 			}
 		}()
 
-		sidecar.Logger.Log("Persist sending log message test: %s\n", "search.v1.log")
+		sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
 		time.Sleep(3 * time.Second)
 		sidecar.Unsub(topic)
 		select {} // This will wait forever
