@@ -1,7 +1,6 @@
 package data
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -40,7 +39,7 @@ func DBConnect() (*DB, error) {
 			dstServType varchar(16),
 			servId varchar(36),
 			msgId integer,
-			bytes bytea)`
+			msg text)`
 
 	db := DB{
 		conn:          conn,
@@ -87,15 +86,15 @@ func (db *DB) CreateTable(tableName string) error {
 	return nil
 }
 
-func (db *DB) StoreData(header *pb.Header, bytes *bytes.Buffer, tableName string) error {
+func (db *DB) StoreData(header *pb.Header, msg *string, tableName string) error {
 
-	createDocString := `(msgType, srcServType, dstServType, servId, msgId, bytes)`
+	createDocString := `(msgType, srcServType, dstServType, servId, msgId, msg)`
 	insertStatement := `insert into ` + tableName + ` ` + createDocString +
 		` values ($1, $2, $3, $4, $5, $6);`
 
 	if _, err := db.conn.Exec(context.Background(), insertStatement,
 		header.MsgType, header.SrcServType, header.DstServType,
-		header.ServId, header.MsgId, bytes.Bytes()); err != nil {
+		header.ServId, header.MsgId, msg); err != nil {
 		fmt.Printf("Store data failed. err: %v\n", err)
 		return err
 	}

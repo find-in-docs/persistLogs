@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"time"
 
@@ -42,20 +40,14 @@ the message queue and write them into a database.`,
 		sidecar := client.InitSidecar(tableName)
 
 		topic := "search.*.v1"
-		buf := &bytes.Buffer{}
-		enc := gob.NewEncoder(buf)
 
 		go func() {
 			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
-				fmt.Printf("Received from sidecar:\n\t%s", m.String())
+				msg := fmt.Sprintf("Received from sidecar:\n\t%s", m.String())
+				fmt.Printf("%s", msg)
 
-				err = enc.Encode(*m)
-				if err != nil {
-					fmt.Printf("Error converting message to Big Endian: \n\terror: %v\n", err)
-				}
-
-				db.StoreData(m.Header, buf, tableName)
+				db.StoreData(m.Header, &msg, tableName)
 			}); err != nil {
 				fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
 					topic, err)
