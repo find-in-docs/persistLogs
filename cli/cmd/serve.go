@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/samirgadkari/persist/pkg/config"
@@ -9,6 +10,7 @@ import (
 	"github.com/samirgadkari/sidecar/pkg/client"
 	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
 	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 const (
@@ -37,7 +39,11 @@ the message queue and write them into a database.`,
 			return
 		}
 
-		sidecar := client.InitSidecar(tableName)
+		sidecar := client.InitSidecar(tableName, nil)
+		if sidecar == nil {
+			fmt.Printf("Error initializing sidecar - Exiting\n")
+			os.Exit(-1)
+		}
 
 		topic := "search.*.v1"
 
@@ -56,6 +62,26 @@ the message queue and write them into a database.`,
 
 		sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
 		time.Sleep(3 * time.Second)
+
+		var retryNum uint32 = 4
+		retryDelayDuration, err := time.ParseDuration("2s")
+		if err != nil {
+			fmt.Printf("Error creating Golang time duration.\nerr: %v\n", err)
+			os.Exit(-1)
+		}
+		retryDelay := durationpb.New(retryDelayDuration)
+
+		err = sidecar.Pub("search.data.v1", []byte("test pub message"),
+			pb.RetryBehavior{
+				RetryNum:   &retryNum,
+				RetryDelay: retryDelay,
+			},
+		)
+		if err != nil {
+			fmt.Printf("Error publishing message.\n\terr: %v\n", err)
+			os.Exit(-1)
+		}
+
 		sidecar.Unsub(topic)
 		select {} // This will wait forever
 	},
