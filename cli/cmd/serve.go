@@ -72,7 +72,7 @@ the message queue and write them into a database.`,
 		retryDelay := durationpb.New(retryDelayDuration)
 
 		err = sidecar.Pub("search.data.v1", []byte("test pub message"),
-			pb.RetryBehavior{
+			&pb.RetryBehavior{
 				RetryNum:   &retryNum,
 				RetryDelay: retryDelay,
 			},
