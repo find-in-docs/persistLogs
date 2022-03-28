@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 
 	"github.com/jackc/pgx/v4"
 	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
@@ -14,6 +15,7 @@ type DB struct {
 	conn          *pgx.Conn
 	tableName     string
 	persistSchema string
+	msgStrRegex   *regexp.Regexp
 }
 
 type WordInt uint64
@@ -44,6 +46,7 @@ func DBConnect() (*DB, error) {
 	db := DB{
 		conn:          conn,
 		persistSchema: persistSchema,
+		msgStrRegex:   regexp.MustCompile(`\\+?`),
 	}
 
 	return &db, nil
@@ -86,7 +89,16 @@ func (db *DB) CreateTable(tableName string) error {
 	return nil
 }
 
+func (db *DB) formatMsg(msg *string) *string {
+
+	result := db.msgStrRegex.ReplaceAllString(*msg, "")
+	return &result
+}
+
 func (db *DB) StoreData(header *pb.Header, msg *string, tableName string) error {
+
+	msg2 := db.formatMsg(msg)
+	fmt.Printf("msg2: %s\n\n\n", msg2)
 
 	createDocString := `(msgType, srcServType, dstServType, servId, msgId, msg)`
 	insertStatement := `insert into ` + tableName + ` ` + createDocString +
@@ -94,7 +106,7 @@ func (db *DB) StoreData(header *pb.Header, msg *string, tableName string) error 
 
 	if _, err := db.conn.Exec(context.Background(), insertStatement,
 		header.MsgType, header.SrcServType, header.DstServType,
-		header.ServId, header.MsgId, msg); err != nil {
+		header.ServId, header.MsgId, msg2); err != nil {
 		fmt.Printf("Store data failed. err: %v\n", err)
 		return err
 	}
