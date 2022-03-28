@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/samirgadkari/persist/pkg/config"
@@ -16,6 +17,12 @@ import (
 const (
 	allTopicsRecvChanSize = 32
 )
+
+func formatMsg(msg *string, re *regexp.Regexp) *string {
+
+	result := re.ReplaceAllString(*msg, "")
+	return &result
+}
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
@@ -47,13 +54,16 @@ the message queue and write them into a database.`,
 
 		topic := "search.*.v1"
 
+		msgStrRegex := regexp.MustCompile(`\\+?`)
+
 		go func() {
 			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
 				msg := fmt.Sprintf("Received from sidecar:\n\t%s", m.String())
-				fmt.Printf("%s", msg)
+				msg2 := formatMsg(&msg, msgStrRegex)
+				fmt.Printf("%s\n\n\n", *msg2)
 
-				db.StoreData(m.Header, &msg, tableName)
+				db.StoreData(m.Header, msg2, tableName)
 			}); err != nil {
 				fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
 					topic, err)
