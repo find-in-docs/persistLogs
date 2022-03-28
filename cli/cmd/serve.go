@@ -54,14 +54,14 @@ the message queue and write them into a database.`,
 
 		topic := "search.*.v1"
 
-		msgStrRegex := regexp.MustCompile(`\\+?`)
+		msgStrRegex := regexp.MustCompile(`\\+?\"|\\+?n|\\+?t`)
 
 		go func() {
 			if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
 				msg := fmt.Sprintf("Received from sidecar:\n\t%s", m.String())
 				msg2 := formatMsg(&msg, msgStrRegex)
-				fmt.Printf("%s\n\n\n", *msg2)
+				fmt.Printf("%s\n", *msg2)
 
 				db.StoreData(m.Header, msg2, tableName)
 			}); err != nil {
