@@ -85,10 +85,12 @@ func PersistLogs() {
 	)
 	if err != nil {
 		fmt.Printf("Error publishing message.\n\terr: %v\n", err)
-		os.Exit(-1)
 	}
 
+	fmt.Println("Press the Enter key to stop")
+	fmt.Scanln()
+
 	sidecar.Unsub(topic)
-	cancel()  // Signal that we want the process subscription goroutines to end
-	select {} // This will wait forever
+	cancel() // Signal that we want the process subscription goroutines to end
+	// select {} // This will wait forever
 }
