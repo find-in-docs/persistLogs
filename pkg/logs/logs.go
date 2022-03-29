@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -49,19 +50,21 @@ func PersistLogs() {
 
 	msgStrRegex := regexp.MustCompile(`\\+?\"|\\+?n|\\+?t`)
 
-	go func() {
-		if err = sidecar.ProcessSubMsgs(topic, allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	err = sidecar.ProcessSubMsgs(ctx, topic,
+		allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 
 			msg := fmt.Sprintf("Received from sidecar:\n\t%s", m.String())
 			msg2 := formatMsg(&msg, msgStrRegex)
 			fmt.Printf("%s\n", *msg2)
 
 			db.StoreData(m.Header, msg2, tableName)
-		}); err != nil {
-			fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
-				topic, err)
-		}
-	}()
+		})
+	if err != nil {
+		fmt.Printf("Error processing subscription messages:\n\ttopic: %s\n\terr: %v\n",
+			topic, err)
+	}
 
 	sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
 	time.Sleep(3 * time.Second)
@@ -86,5 +89,6 @@ func PersistLogs() {
 	}
 
 	sidecar.Unsub(topic)
+	cancel()  // Signal that we want the process subscription goroutines to end
 	select {} // This will wait forever
 }
