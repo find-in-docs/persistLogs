@@ -10,6 +10,7 @@ import (
 	"github.com/samirgadkari/persist/pkg/config"
 	"github.com/samirgadkari/persist/pkg/data"
 	"github.com/samirgadkari/sidecar/pkg/client"
+	"github.com/samirgadkari/sidecar/pkg/utils"
 	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -91,18 +92,16 @@ func PersistLogs() {
 	fmt.Println("Press the Enter key to stop")
 	fmt.Scanln()
 
-	/* Make sure that our goroutines are all closing
-	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> num goroutines: %d\n", runtime.NumGoroutine())
 	// Signal that we want the process subscription goroutines to end.
 	// This cancellation causes the goroutines to unsubscribe from the topic
 	// before they end themselves.
 	cancel()
 
 	sleepDur, _ := time.ParseDuration("3s")
+	fmt.Printf("Sleeping for %s seconds\n", sleepDur)
 	time.Sleep(sleepDur)
 
-	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> num goroutines: %d\n", runtime.NumGoroutine())
-	*/
+	utils.ListGoroutinesRunning()
 
 	select {} // This will wait forever
 }
