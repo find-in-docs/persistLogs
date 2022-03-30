@@ -51,6 +51,7 @@ func PersistLogs() {
 	msgStrRegex := regexp.MustCompile(`\\+?\"|\\+?n|\\+?t`)
 
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	err = sidecar.ProcessSubMsgs(ctx, topic,
 		allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
@@ -69,15 +70,15 @@ func PersistLogs() {
 	sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
 	time.Sleep(3 * time.Second)
 
-	var retryNum uint32 = 4
-	retryDelayDuration, err := time.ParseDuration("2s")
+	var retryNum uint32 = 1
+	retryDelayDuration, err := time.ParseDuration("200ms")
 	if err != nil {
 		fmt.Printf("Error creating Golang time duration.\nerr: %v\n", err)
 		os.Exit(-1)
 	}
 	retryDelay := durationpb.New(retryDelayDuration)
 
-	err = sidecar.Pub("search.data.v1", []byte("test pub message"),
+	err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"),
 		&pb.RetryBehavior{
 			RetryNum:   &retryNum,
 			RetryDelay: retryDelay,
@@ -90,7 +91,18 @@ func PersistLogs() {
 	fmt.Println("Press the Enter key to stop")
 	fmt.Scanln()
 
-	sidecar.Unsub(topic)
-	cancel() // Signal that we want the process subscription goroutines to end
-	// select {} // This will wait forever
+	/* Make sure that our goroutines are all closing
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> num goroutines: %d\n", runtime.NumGoroutine())
+	// Signal that we want the process subscription goroutines to end.
+	// This cancellation causes the goroutines to unsubscribe from the topic
+	// before they end themselves.
+	cancel()
+
+	sleepDur, _ := time.ParseDuration("3s")
+	time.Sleep(sleepDur)
+
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> num goroutines: %d\n", runtime.NumGoroutine())
+	*/
+
+	select {} // This will wait forever
 }
