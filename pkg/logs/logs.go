@@ -91,6 +91,7 @@ func PersistLogs() {
 
 	fmt.Println("Press the Enter key to stop")
 	fmt.Scanln()
+	fmt.Println("User pressed Enter key")
 
 	// Signal that we want the process subscription goroutines to end.
 	// This cancellation causes the goroutines to unsubscribe from the topic
