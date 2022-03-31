@@ -35,7 +35,7 @@ ${EXEDIR}:
 
 build: | ${EXEDIR}
 	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
-	go build -o ${BIN_NAME} cli/main.go
+	go build -o ${BIN_NAME} pkg/main/main.go
 
 run: build
 	./${BIN_NAME} serve
