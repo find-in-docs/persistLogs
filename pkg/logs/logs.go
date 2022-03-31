@@ -41,9 +41,9 @@ func PersistLogs() {
 		return
 	}
 
-	sidecar := client.InitSidecar(tableName, nil)
-	if sidecar == nil {
-		fmt.Printf("Error initializing sidecar - Exiting\n")
+	sidecar, err := client.InitSidecar(tableName, nil)
+	if err != nil {
+		fmt.Printf("Error initializing sidecar: %v\n", err)
 		os.Exit(-1)
 	}
 
