@@ -47,7 +47,7 @@ func PersistLogs() {
 		os.Exit(-1)
 	}
 
-	topic := "search.*.v1"
+	topic := "search.log.v1"
 
 	msgStrRegex := regexp.MustCompile(`\\+?\"|\\+?n|\\+?t`)
 
