@@ -5,22 +5,19 @@ BIN_NAME=./bin/persist
 
 # The .PHONY target will ignore any file that exists with the same name as the target
 # in your makefile, and built it regardless.
-.PHONY: all cli init build run clean
+.PHONY: all init build run clean
 
 # The all target is the default target when make is called without any arguments.
 all: clean | run
 
-cli:
-	mkdir cli
-	cd cli && cobra init
-	cd cli && cobra add serve
-
-init: | cli
+init:
+	- rm go.mod
+	- rm go.sum
 	go mod init github.com/samirgadkari/persist
 	go mod edit -replace=github.com/samirgadkari/sidecar@v0.0.0-unpublished=../sidecar
-	go mod tidy
+	go mod tidy -compat=1.17
 	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
-	go mod tidy
+	go mod tidy -compat=1.17
 
 ${EXEDIR}:
 	mkdir ${EXEDIR}
@@ -38,11 +35,11 @@ build: | ${EXEDIR}
 	go build -o ${BIN_NAME} pkg/main/main.go
 
 run: build
-	./${BIN_NAME} serve
+	./${BIN_NAME}
 
 clean:
 	go clean
 	rm ${BIN_NAME}
 	go clean -cache -modcache -i -r
 	go get -d github.com/samirgadkari/sidecar@v0.0.0-unpublished
-	go mod tidy
+	go mod tidy -compat=1.17
