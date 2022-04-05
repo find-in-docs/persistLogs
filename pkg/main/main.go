@@ -35,7 +35,7 @@ func main() {
 		return
 	}
 
-	tableName := "persist"
+	tableName := "logs"
 	err = db.CreateTable(tableName)
 	if err != nil {
 		return
@@ -88,6 +88,10 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error publishing message.\n\terr: %v\n", err)
 	}
+
+	/* Message with no retry params
+	err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"), nil)
+	*/
 
 	fmt.Println("Press the Enter key to stop")
 	fmt.Scanln()
