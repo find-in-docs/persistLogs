@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v4"
-	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
+	pb "github.com/find-in-docs/sidecar/protos/v1/messages"
 	"github.com/spf13/viper"
 )
 

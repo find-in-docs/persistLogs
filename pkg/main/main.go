@@ -7,11 +7,11 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/samirgadkari/persist/pkg/config"
-	"github.com/samirgadkari/persist/pkg/data"
-	"github.com/samirgadkari/sidecar/pkg/client"
-	"github.com/samirgadkari/sidecar/pkg/utils"
-	pb "github.com/samirgadkari/sidecar/protos/v1/messages"
+	"github.com/find-in-docs/persist/pkg/config"
+	"github.com/find-in-docs/persist/pkg/data"
+	"github.com/find-in-docs/sidecar/pkg/client"
+	"github.com/find-in-docs/sidecar/pkg/utils"
+	pb "github.com/find-in-docs/sidecar/protos/v1/messages"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
