@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/find-in-docs/persist/pkg/config"
-	"github.com/find-in-docs/persist/pkg/data"
+	"github.com/find-in-docs/persistLogs/pkg/config"
+	"github.com/find-in-docs/persistLogs/pkg/data"
 	"github.com/find-in-docs/sidecar/pkg/client"
 	"github.com/find-in-docs/sidecar/pkg/utils"
 	pb "github.com/find-in-docs/sidecar/protos/v1/messages"
