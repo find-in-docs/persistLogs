@@ -12,7 +12,7 @@ import (
 	"github.com/find-in-docs/sidecar/pkg/client"
 	"github.com/find-in-docs/sidecar/pkg/utils"
 	pb "github.com/find-in-docs/sidecar/protos/v1/messages"
-	"google.golang.org/protobuf/types/known/durationpb"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -41,7 +41,7 @@ func main() {
 		return
 	}
 
-	sidecar, err := client.InitSidecar(tableName, nil)
+	sidecar, err := client.InitSidecar(viper.GetString("serviceName"), nil)
 	if err != nil {
 		fmt.Printf("Error initializing sidecar: %v\n", err)
 		os.Exit(-1)
@@ -68,26 +68,28 @@ func main() {
 			topic, err)
 	}
 
-	sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
-	time.Sleep(3 * time.Second)
+	/*
+		sidecar.Logger.Log("Persist sending log message test: %s\n", "search.log.v1")
+		time.Sleep(3 * time.Second)
 
-	var retryNum uint32 = 1
-	retryDelayDuration, err := time.ParseDuration("200ms")
-	if err != nil {
-		fmt.Printf("Error creating Golang time duration.\nerr: %v\n", err)
-		os.Exit(-1)
-	}
-	retryDelay := durationpb.New(retryDelayDuration)
+		var retryNum uint32 = 1
+		retryDelayDuration, err := time.ParseDuration("200ms")
+		if err != nil {
+			fmt.Printf("Error creating Golang time duration.\nerr: %v\n", err)
+			os.Exit(-1)
+		}
+		retryDelay := durationpb.New(retryDelayDuration)
 
-	err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"),
-		&pb.RetryBehavior{
-			RetryNum:   &retryNum,
-			RetryDelay: retryDelay,
-		},
-	)
-	if err != nil {
-		fmt.Printf("Error publishing message.\n\terr: %v\n", err)
-	}
+		err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"),
+			&pb.RetryBehavior{
+				RetryNum:   &retryNum,
+				RetryDelay: retryDelay,
+			},
+		)
+		if err != nil {
+			fmt.Printf("Error publishing message.\n\terr: %v\n", err)
+		}
+	*/
 
 	/* Message with no retry params
 	err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"), nil)
