@@ -14,7 +14,7 @@ init:
 	- rm go.mod
 	- rm go.sum
 	go mod init github.com/find-in-docs/persistLogs
-	go mod tidy -compat=1.17
+	go mod tidy
 
 ${EXEDIR}:
 	mkdir ${EXEDIR}
@@ -29,4 +29,7 @@ clean:
 	go clean
 	- rm ${BIN_NAME}
 	go clean -cache -modcache -i -r
-	go mod tidy -compat=1.17
+	go mod tidy
+
+upload: build
+	./buildImageInMinikube.sh
