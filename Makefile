@@ -5,7 +5,7 @@ BIN_NAME=./bin/persistLogs
 
 # The .PHONY target will ignore any file that exists with the same name as the target
 # in your makefile, and built it regardless.
-.PHONY: all init build run clean
+.PHONY: all init build run clean upload
 
 # The all target is the default target when make is called without any arguments.
 all: clean | run
