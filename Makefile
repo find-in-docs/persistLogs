@@ -58,4 +58,5 @@ upload: build
 	# echo "Get each of these packages in the Dockerfile"
 	# rg --iglob "*.go" -o -I -N "[\"]github([^\"]+)[\"]" | sed '/^$/d' | sed 's/\"//g' | awk '{print "RUN go get " $0}'
 	docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+	# We specify image-pull-policy-Never because we're actually building the image on minikube.
 	kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never

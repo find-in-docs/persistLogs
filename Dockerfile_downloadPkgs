@@ -19,6 +19,7 @@ COPY go.sum ./
 # you get them directly from github. This way, there is no sync lag between
 # your changes on github and your packages on Google servers. Sometimes, it takes
 # more than a day for Google servers to catch up to your changes.
+# This is now updated in the Makefile under init.
 # RUN go env -w GOPROXY=direct 
 
 RUN apk update && \
