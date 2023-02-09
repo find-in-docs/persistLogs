@@ -1,7 +1,8 @@
 # This makes sure the commands are run within a BASH shell.
 SHELL := /bin/bash
 EXEDIR := ./bin
-BIN_NAME=./bin/persistLogs
+EXENAME := persistlogs
+BIN_NAME=./${EXEDIR}/${EXENAME}
 
 # The .PHONY target will ignore any file that exists with the same name as the target
 # in your makefile, and built it regardless.
@@ -13,13 +14,18 @@ all: clean | run
 init:
 	echo "Setting up local ..."
 	go env -w GOPROXY=direct 
+	echo "----------------------------------------------------"
+	echo "To get protoc, look here:"
+	echo "  example: https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-linux-x86_64.zip"
+	echo "To install protoc-gen-go-grpc, do this:"
+	echo "  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc"
+	echo "To install protoc-gen-go, do this:"
+	echo "  go install google.golang.org/grpc/cmd/protoc-gen-go"
+	echo "----------------------------------------------------"
 	- rm go.mod
 	- rm go.sum
 	go mod init github.com/find-in-docs/persistLogs
 	go mod tidy
-	echo "Setting up minikube ..."
-	docker build -t persistlogs -f ./Dockerfile_downloadPkgs .
-	  # go env -w GOPROXY="https://proxy.golang.org,direct"
 
 ${EXEDIR}:
 	echo "Building exe directory ..."
@@ -47,16 +53,17 @@ run: build
 	./${BIN_NAME}
 
 clean:
-	echo "Cleaning ..."
+	echo "Cleaning locally ..."
 	go clean
 	- rm ${BIN_NAME}
-	# go clean -cache -modcache -i -r
+	go clean -cache -modcache -i -r
 	go mod tidy
 
 upload: build
 	echo "Start building on minikube ..."
 	# echo "Get each of these packages in the Dockerfile"
 	# rg --iglob "*.go" -o -I -N "[\"]github([^\"]+)[\"]" | sed '/^$/d' | sed 's/\"//g' | awk '{print "RUN go get " $0}'
-	docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+	# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+	docker build -t persistlogs -f ./Dockerfile .
 	# We specify image-pull-policy-Never because we're actually building the image on minikube.
 	kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never

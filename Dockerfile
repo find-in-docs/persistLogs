@@ -1,6 +1,6 @@
 
 # Base image
-FROM golang:1.19-alpine
+FROM golang:1.19.5-alpine3.17
 
 # Specify work directory on the image.
 # All commands will refer to this work directory from now on below.
@@ -30,21 +30,6 @@ COPY go.sum ./
 # Copy source code into the image
 COPY pkg/ /app/pkg/
 
-RUN pwd
-RUN ls -l pkg/main
-
-# RUN go clean -modcache
-# RUN go get github.com/spf13/viper
-# RUN go get github.com/jackc/pgx/v4
-# RUN go get github.com/find-in-docs/sidecar/protos/v1/messages
-# RUN go get github.com/spf13/viper
-# RUN go get github.com/find-in-docs/sidecar/pkg/client
-# RUN go get github.com/find-in-docs/sidecar/pkg/utils
-# RUN go get github.com/find-in-docs/sidecar/protos/v1/messages
-# RUN go get github.com/spf13/viper
-# RUN go get github.com/find-in-docs/persistLogs/pkg/config
-# RUN go get github.com/find-in-docs/persistLogs/pkg/data
- 
 RUN go build -o persistlogs pkg/main/main.go
 
 RUN ls -l /app
