@@ -44,7 +44,6 @@ build: | ${EXEDIR}
 	echo "  in github, it will get it from github directly, then add your repo to their syncing process."
 	echo "<<<<<<<<<<<<<<<<<"
 	
-	sleep 2s
 	echo "Building locally ..."
 	go build -o ${BIN_NAME} pkg/main/main.go
 
@@ -64,6 +63,11 @@ upload: build
 	# echo "Get each of these packages in the Dockerfile"
 	# rg --iglob "*.go" -o -I -N "[\"]github([^\"]+)[\"]" | sed '/^$/d' | sed 's/\"//g' | awk '{print "RUN go get " $0}'
 	# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+	docker pull nats:latest
+	docker pull postgres:latest
+
 	docker build -t persistlogs -f ./Dockerfile .
-	# We specify image-pull-policy-Never because we're actually building the image on minikube.
-	kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never
+
+	# We specify image-pull-policy=Never because we're actually building the image on minikube.
+	# kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never
+	kubectl apply -f manifests/minikube

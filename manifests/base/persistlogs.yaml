@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:   # labels define key-value pairs. Each key must be unique
+            # for a given object
+    app: persistlogs
+  name: persistlogs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: persistlogs
+  template:   # Template specifies the pod specification.
+              # Each pod will be created using this template.
+    metadata:
+      labels:
+        app: persistlogs     # Labels given to each pod
+    spec:
+      # initContainers:         # Init containers finish before any other
+                              # container can start.
+                              # There can be many init containers.
+                              # They run in the sequence given here.
+                              # Each has to complete before the next is started.
+                              # After the last completes, the containers are
+                              # all started in parallel.
+      #  - name: init-container
+          # image: init-container:latest
+      containers:             # Containers in this pod
+        - name: sidecar       # Name of the container
+          image: sidecar:latest
+          ports:
+            - containerPort: 5555 # and this GRPC port.
+        - name: nats
+          image: nats:2.19.12-alpine3.17
+          ports:
+            - containerPort: 4222 # NATS will listen to this default port for clients.
+        - name: postgres
+          image: postgres:15.1-alpine3.17
+          ports:
+            - containerPort: 5432 # Postgres will listen to this database port.
+        - name: persistlogs   # Name of the container
+          image: persistlogs:latest
+          ports:
+            - containerPort: 5432 # and this database port,
+            - containerPort: 5555 # and this GRPC port.
+

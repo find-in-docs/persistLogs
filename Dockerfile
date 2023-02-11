@@ -32,4 +32,14 @@ COPY pkg/ /app/pkg/
 
 RUN go build -o persistlogs pkg/main/main.go
 
-RUN ls -l /app
+RUN mkdir -p /var/lib/postgresql/data && \
+  chmod 0700 /var/lib/postgresql/data
+
+# RUN apk add --update util-linux
+# RUN whereis initdb
+
+RUN addgroup -S postgres && adduser -S postgres -G postgres
+# USER postgres
+
+# RUN initdb -D /var/lib/postgresql/data && \
+#   RUN pg_ctl start -D /var/lib/postgresql/data

@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-sc
+provisioner: kubernetes.io/no-provisioner # Locally attached persistent volumes
+                                          # are provisioned manuially.
+                                          # So you need to specify this provisioner.
+volumeBindingMode: WaitForFirstConsumer
