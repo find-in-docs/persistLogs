@@ -27,6 +27,9 @@ func formatMsg(msg *string, re *regexp.Regexp) *string {
 
 func main() {
 
+  fmt.Printf("Sleeping for 10000 seconds\n")
+  time.Sleep(10000 * time.Second)
+
 	config.Load()
 
 	// Setup database

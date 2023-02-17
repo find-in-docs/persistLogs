@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
   labels:   # labels define key-value pairs. Each key must be unique
             # for a given object
-    app: postgres
+    app: persistlogs
+  name: persistlogs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: persistlogs
   template:   # Template specifies the pod specification.
               # Each pod will be created using this template.
     metadata:
       labels:
-        app: postgres     # Labels given to each pod
+        app: persistlogs     # Labels given to each pod
     spec:
       # initContainers:         # Init containers finish before any other
                               # container can start.
@@ -26,19 +26,23 @@ spec:
       #  - name: init-container
           # image: init-container:latest
       containers:             # Containers in this pod
-        - name: postgres   # Name of the container
-          image: postgres:10.4
-          imagePullPolicy: "IfNotPresent"
-          envFrom:
-            - configMapRef:
-                name: postgres-config
+        #        - name: nginx
+        #          image: nginx:latest
+        #          imagePullPolicy: Never
+        #          ports:
+        #          - containerPort: 5432
+        #        - name: sidecar       # Name of the container
+        #          image: sidecar:latest
+        #          imagePullPolicy: Never
+        #          ports:
+        #            - name: grpc-port
+        #              containerPort: 5555 # Listens on this GRPC port.
+        - name: persistlogs   # Name of the container
+          image: persistlogs:latest
+          imagePullPolicy: Never
           ports:
-            - containerPort: 5432 # and this database port,
-              name: pg-listener
-          volumeMounts:
-          - name: postgres-data
-            mountPath: /var/lib/postgres/data
-      volumes:
-      - name: postgres-data
-        persistentVolumeClaim:
-          claimName: postgres-pvc
+            - name: postgres-port
+              containerPort: 5432 # Listens on this database port.
+                # - name: grpc-port
+                # containerPort: 5555 # Listens on this GRPC port.
+
