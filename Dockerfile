@@ -43,3 +43,13 @@ RUN addgroup -S postgres && adduser -S postgres -G postgres
 
 # RUN initdb -D /var/lib/postgresql/data && \
 #   RUN pg_ctl start -D /var/lib/postgresql/data
+
+# To see the output of the commands in this file, do:
+# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+# RUN pwd >&2
+# RUN ls -l >&2
+
+# By default the ENTRYPOINT is /bin/sh -c.
+# We specify CMD to pass to the ENTRYPOINT as an argument,
+# so the following command results in /bin/sh -c ./persistlogs
+CMD ["./persistlogs"]
