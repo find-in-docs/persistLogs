@@ -40,11 +40,17 @@ spec:
               containerPort: 5432 # Listens on this database port.
                 # - name: grpc-port
                 # containerPort: 5555 # Listens on this GRPC port.
-                #              volumeMounts:
-                #                - name: mnt-config
-                #                  mountPath: /mnt/config
-                #                  readOnly: true
-
+          volumeMounts:
+          - name: mnt-config
+            mountPath: /mnt/config
+            readOnly: true
+      volumes:
+        - name: mnt-config
+          configMap:  # This allows you to specify which items to include here.
+            name: mnt-config
+            items:
+              - key: service-name.conf
+                path: service-name.conf
 
                   #
                   #    spec:
