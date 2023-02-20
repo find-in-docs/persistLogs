@@ -6,6 +6,8 @@ spec:
   type: ClusterIP
   selector:
    app: postgres
+  sessionAffinity: None   # This is the default, and means requests are
+                          # sent to any provider of this service.
   ports:
   - name: postgres-listen-port
     port: 5432

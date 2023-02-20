@@ -14,23 +14,18 @@ spec:
               # Each pod will be created using this template.
     metadata:
       labels:
-        app: persistlogs     # Labels given to each pod
+        app: persistlogs     # Labels given to each podspec
     spec:
-      # initContainers:         # Init containers finish before any other
-                              # container can start.
-                              # There can be many init containers.
-                              # They run in the sequence given here.
-                              # Each has to complete before the next is started.
-                              # After the last completes, the containers are
-                              # all started in parallel.
-      #  - name: init-container
-          # image: init-container:latest
+        # initContainers:         # Init containers finish before any other
+                                # container can start.
+                                # There can be many init containers.
+                                # They run in the sequence given here.
+                                # Each has to complete before the next is started.
+                                # After the last completes, the containers are
+                                # all started in parallel.
+        #  - name: init-container
+            # image: init-container:latest
       containers:             # Containers in this pod
-        #        - name: nginx
-        #          image: nginx:latest
-        #          imagePullPolicy: Never
-        #          ports:
-        #          - containerPort: 5432
         #        - name: sidecar       # Name of the container
         #          image: sidecar:latest
         #          imagePullPolicy: Never
@@ -45,4 +40,25 @@ spec:
               containerPort: 5432 # Listens on this database port.
                 # - name: grpc-port
                 # containerPort: 5555 # Listens on this GRPC port.
+                #              volumeMounts:
+                #                - name: mnt-config
+                #                  mountPath: /mnt/config
+                #                  readOnly: true
 
+
+                  #
+                  #    spec:
+                  #      volumes:
+                  #      - name: mnt-config
+                  #        projected:
+                  #          sources:
+                  #          - configMap:
+                  #            name: persistlogs-config
+                  #          - secret:
+                  #            name: postgres-login
+                  #            items:
+                  #            - key: user
+                  #              path: user-value-path
+                  #            - key: pass
+                  #              path: pass-value-path
+                  #              mode: 0600
