@@ -30,6 +30,12 @@ COPY go.sum ./
 # Copy source code into the image
 COPY pkg/ /app/pkg/
 
+# This file contains the DNS server information. It is used by the persistlogs
+# service to:
+#   - Complete the Fully Qualified Domain Name of the request
+#   - Locate the IP address of the DNS server
+COPY manifests/minikube/persistlogs_resolv.conf /etc/resolv.conf
+
 RUN go build -o persistlogs pkg/main/main.go
 
 RUN mkdir -p /var/lib/postgresql/data && \
