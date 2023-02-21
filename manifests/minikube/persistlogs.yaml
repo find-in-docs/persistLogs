@@ -44,27 +44,22 @@ spec:
           - name: mnt-config
             mountPath: /mnt/config
             readOnly: true
+          - name: mnt-secret
+            mountPath: /mnt/secret
+            readOnly: true
       volumes:
         - name: mnt-config
           configMap:  # This allows you to specify which items to include here.
-            name: mnt-config
+            name: persistlogs-config
             items:
-              - key: service-name.conf
+              - key: serviceName
                 path: service-name.conf
-
-                  #
-                  #    spec:
-                  #      volumes:
-                  #      - name: mnt-config
-                  #        projected:
-                  #          sources:
-                  #          - configMap:
-                  #            name: persistlogs-config
-                  #          - secret:
-                  #            name: postgres-login
-                  #            items:
-                  #            - key: user
-                  #              path: user-value-path
-                  #            - key: pass
-                  #              path: pass-value-path
-                  #              mode: 0600
+        - name: mnt-secret
+          secret:
+            secretName: postgres-login
+            items:
+              - key: user
+                path: user-value-path
+              - key: pass
+                path: pass-value-path
+                mode: 0400
