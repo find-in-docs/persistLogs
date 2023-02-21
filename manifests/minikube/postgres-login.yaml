@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-login
+stringData:
+  user: cG9zdGdyZXMK
+  pass: dGhpc29rbGFnb3QK
