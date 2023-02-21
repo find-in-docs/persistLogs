@@ -70,6 +70,12 @@ upload: build
 	# If you want to see the output of your RUN commands present in the Dockerfile, do:
 	# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
 
+	# Create a secret before applying all the manifests.
+	# This is the only way I found that allowed me to use local environment
+	# variables to create the secret. This way, if I need to change the values,
+	# I just have to change the environment variables and do a 'make upload'.
+	kubectl create secret generic postgres-login --from-literal user=$(echo $POSTGRES_USERNAME) --from-literal pass=$(echo $POSTGRES_PASSWORD)
+
 	# We specify image-pull-policy=Never because we're actually building the image on minikube.
 	# kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never
 	kubectl apply -f manifests/minikube
