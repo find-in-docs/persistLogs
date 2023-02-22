@@ -39,7 +39,7 @@ RUN mkdir -p /var/lib/postgres/data && \
   chmod 0700 /var/lib/postgres/data
 
 RUN apk add --update util-linux
-RUN whereis initdb
+# RUN whereis initdb
 
 # RUN addgroup -S postgres && adduser -S postgres -G postgres
 # USER postgres
