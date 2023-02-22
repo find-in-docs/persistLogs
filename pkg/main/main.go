@@ -27,20 +27,24 @@ func formatMsg(msg *string, re *regexp.Regexp) *string {
 
 func main() {
 
+  fmt.Printf("Loading configuration\n")
 	config.Load()
 
+  fmt.Printf("Connecting to DB\n")
 	// Setup database
 	db, err := data.DBConnect()
 	if err != nil {
 		return
 	}
 
+  fmt.Printf("Creating table\n")
 	tableName := "logs"
 	err = db.CreateTable(tableName)
 	if err != nil {
 		return
 	}
 
+  fmt.Printf("Initializing sidecar\n")
 	sidecar, err := client.InitSidecar(viper.GetString("serviceName"), nil)
 	if err != nil {
 		fmt.Printf("Error initializing sidecar: %v\n", err)
@@ -54,6 +58,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+  fmt.Printf("Setting up processing of messages\n")
 	err = sidecar.ProcessSubMsgs(ctx, topic,
 		allTopicsRecvChanSize, func(m *pb.SubTopicResponse) {
 

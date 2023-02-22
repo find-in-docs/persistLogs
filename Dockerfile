@@ -21,9 +21,6 @@ COPY go.sum ./
 # more than a day for Google servers to catch up to your changes.
 # RUN go env -w GOPROXY=direct 
 
-# RUN apk update && \
-#     apk add git
-
 # Download required packages in the image
 # RUN go mod download
 
@@ -38,22 +35,27 @@ COPY manifests/minikube/persistlogs_resolv.conf /etc/resolv.conf
 
 RUN go build -o persistlogs pkg/main/main.go
 
-RUN mkdir -p /var/lib/postgresql/data && \
-  chmod 0700 /var/lib/postgresql/data
+RUN mkdir -p /var/lib/postgres/data && \
+  chmod 0700 /var/lib/postgres/data
 
-# RUN apk add --update util-linux
-# RUN whereis initdb
+RUN apk add --update util-linux
+RUN whereis initdb
 
-RUN addgroup -S postgres && adduser -S postgres -G postgres
+# RUN addgroup -S postgres && adduser -S postgres -G postgres
 # USER postgres
 
-# RUN initdb -D /var/lib/postgresql/data && \
-#   RUN pg_ctl start -D /var/lib/postgresql/data
+# RUN initdb -D /var/lib/postgres/data && \
+#    RUN pg_ctl start -D /var/lib/postgres/data
 
 # To see the output of the commands in this file, do:
 # docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
 # RUN pwd >&2
 # RUN ls -l >&2
+
+RUN apk update && \
+    apk add tree && \
+    apk add bash && \
+    apk add curl wget
 
 # By default the ENTRYPOINT is /bin/sh -c.
 # We specify CMD to pass to the ENTRYPOINT as an argument,

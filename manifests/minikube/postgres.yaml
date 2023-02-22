@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   labels:   # labels define key-value pairs. Each key must be unique
@@ -27,7 +27,7 @@ spec:
           # image: init-container:latest
       containers:             # Containers in this pod
         - name: postgres   # Name of the container
-          image: postgres:10.4
+          image: postgres:latest
           imagePullPolicy: "IfNotPresent"
           envFrom:
             - configMapRef:

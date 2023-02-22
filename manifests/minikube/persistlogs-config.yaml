@@ -3,4 +3,8 @@ kind: ConfigMap
 metadata:
   name: persistlogs-config
 data:
-  serviceName: persistLogs
+  config.yaml: |
+    serviceName: persistLogs
+    output:
+      type: database
+      connection: "host=postgres port=5432 user=pg dbname=search password=pg sslmode=disable"

@@ -42,24 +42,24 @@ spec:
                 # containerPort: 5555 # Listens on this GRPC port.
           volumeMounts:
           - name: mnt-config
-            mountPath: /mnt/config
+            mountPath: /mnt/config.yaml
             readOnly: true
-          - name: mnt-secret
-            mountPath: /mnt/secret
-            readOnly: true
+              #          - name: mnt-secret-pg-login
+              #            mountPath: /mnt/secret/pg-login
+              #            readOnly: true
       volumes:
         - name: mnt-config
-          configMap:  # This allows you to specify which items to include here.
+          configMap:
             name: persistlogs-config
-            items:
-              - key: serviceName
-                path: service-name.conf
-        - name: mnt-secret
-          secret:
-            secretName: postgres-login
-            items:
-              - key: user
-                path: user-value-path
-              - key: pass
-                path: pass-value-path
-                mode: 0400
+              #            items:
+              #              - key: serviceName
+              #                path: service-name.conf
+              #        - name: mnt-secret-pg-login
+              #          secret:
+              #            secretName: postgres-login
+              #            items:
+              #              - key: user
+              #                path: user-value-path
+              #              - key: pass
+              #                path: pass-value-path
+              #                mode: 0400

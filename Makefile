@@ -65,10 +65,11 @@ upload: build
 	# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
 	docker pull nats:latest
 	docker pull postgres:latest
+	# docker build -t postgres -f Dockerfile_postgres .
 
-	docker build -t persistlogs -f ./Dockerfile .
+	# docker build -t persistlogs -f ./Dockerfile .
 	# If you want to see the output of your RUN commands present in the Dockerfile, do:
-	# docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
+	docker build --progress=plain --no-cache -t persistlogs -f ./Dockerfile .
 	
 	# We specify image-pull-policy=Never because we're actually building the image on minikube.
 	# kubectl run persistlogs --image=persistlogs:latest --image-pull-policy=Never --restart=Never

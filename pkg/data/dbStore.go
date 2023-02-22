@@ -26,7 +26,8 @@ type Doc struct {
 
 func DBConnect() (*DB, error) {
 
-	conn, err := pgx.Connect(context.Background(), viper.GetString("output.connection"))
+  cStr := viper.GetString("output.connection")
+	conn, err := pgx.Connect(context.Background(), cStr)
 	if err != nil {
 		fmt.Printf("Error connecting to postgres database using: %s\n",
 			viper.GetString("output.location"))
