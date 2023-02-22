@@ -6,27 +6,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-/*
-func loadFile(fn string) ([]byte, error) {
-  b, err := os.ReadFile(fn)
-  if err != nil {
-    fmt.Printf("Could not read file: %s, err: %s\n", fn, err)
-    return nil, err
-  }
-
-  return b, nil
-}
-
-func loadString(fn string) (string, error) {
-  b, err := loadFile(fn)
-  if err != nil {
-    return nil, err
-  }
-
-  return b, nil
-}
-*/
-
 func Load() {
 
   /*
