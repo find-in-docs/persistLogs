@@ -1,16 +1,17 @@
 package main
 
 import (
+  "sync"
 	"context"
 	"fmt"
 	"os"
 	"regexp"
-	"time"
+  // "time"
 
 	"github.com/find-in-docs/persistLogs/pkg/config"
 	"github.com/find-in-docs/persistLogs/pkg/data"
 	"github.com/find-in-docs/sidecar/pkg/client"
-	"github.com/find-in-docs/sidecar/pkg/utils"
+	// "github.com/find-in-docs/sidecar/pkg/utils"
 	pb "github.com/find-in-docs/sidecar/protos/v1/messages"
 	"github.com/spf13/viper"
 )
@@ -26,6 +27,9 @@ func formatMsg(msg *string, re *regexp.Regexp) *string {
 }
 
 func main() {
+
+  var wg sync.WaitGroup
+  wg.Add(1)
 
   fmt.Printf("Loading configuration\n")
 	config.Load()
@@ -45,6 +49,7 @@ func main() {
 	}
 
   fmt.Printf("Initializing sidecar\n")
+  fmt.Printf("serviceName: %s\n", viper.GetString("serviceName"))
 	sidecar, err := client.InitSidecar(viper.GetString("serviceName"), nil)
 	if err != nil {
 		fmt.Printf("Error initializing sidecar: %v\n", err)
@@ -100,6 +105,13 @@ func main() {
 	err = sidecar.Pub(ctx, "search.data.v1", []byte("test pub message"), nil)
 	*/
 
+  /*
+  This section was for testing if the GoRoutines are all
+  finished before exiting. This was only meant as a debug
+  mechanism. Since we're now running in minikube, this mechanism
+  will not work, so it is commented out for now.
+  Not sure what to replace it with, at this time.
+
 	fmt.Println("Press the Enter key to stop")
 	fmt.Scanln()
 	fmt.Println("User pressed Enter key")
@@ -114,6 +126,6 @@ func main() {
 	time.Sleep(sleepDur)
 
 	utils.ListGoroutinesRunning()
-
-	select {} // This will wait forever
+  */
+	wg.Wait()   // wait forever
 }
