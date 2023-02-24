@@ -26,12 +26,18 @@ spec:
         #  - name: init-container
             # image: init-container:latest
       containers:             # Containers in this pod
-        #        - name: sidecar       # Name of the container
-        #          image: sidecar:latest
-        #          imagePullPolicy: Never
-        #          ports:
-        #            - name: grpc-port
-        #              containerPort: 5555 # Listens on this GRPC port.
+        - name: sidecar   # Name of the container
+          image: sidecar:latest
+          imagePullPolicy: Never
+          ports:
+            - name: postgres-port
+              containerPort: 5432 # Listens on this database port.
+                # - name: grpc-port
+                # containerPort: 5555 # Listens on this GRPC port.
+          volumeMounts:
+          - name: mnt-config-sc
+            mountPath: /mnt
+            readOnly: true
         - name: persistlogs   # Name of the container
           image: persistlogs:latest
           imagePullPolicy: Never
@@ -41,25 +47,13 @@ spec:
                 # - name: grpc-port
                 # containerPort: 5555 # Listens on this GRPC port.
           volumeMounts:
-          - name: mnt-config
-            mountPath: /mnt/config.yaml
+          - name: mnt-config-pl
+            mountPath: /mnt
             readOnly: true
-              #          - name: mnt-secret-pg-login
-              #            mountPath: /mnt/secret/pg-login
-              #            readOnly: true
       volumes:
-        - name: mnt-config
+        - name: mnt-config-sc
+          configMap:
+            name: sidecar-config
+        - name: mnt-config-pl
           configMap:
             name: persistlogs-config
-              #            items:
-              #              - key: serviceName
-              #                path: service-name.conf
-              #        - name: mnt-secret-pg-login
-              #          secret:
-              #            secretName: postgres-login
-              #            items:
-              #              - key: user
-              #                path: user-value-path
-              #              - key: pass
-              #                path: pass-value-path
-              #                mode: 0400

@@ -3,8 +3,9 @@ kind: ConfigMap
 metadata:
   name: persistlogs-config
 data:
-  config.yaml: |
-    serviceName: persistLogs
+  persistlogs-config.yaml: |
+    serviceName: "persistLogs"
     output:
       type: database
       connection: "host=postgres port=5432 user=pg dbname=search password=pg sslmode=disable"
+    sidecarServiceAddr: "127.0.0.1:5555"
