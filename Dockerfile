@@ -31,7 +31,7 @@ COPY pkg/ /app/pkg/
 # service to:
 #   - Complete the Fully Qualified Domain Name of the request
 #   - Locate the IP address of the DNS server
-COPY manifests/minikube/persistlogs_resolv.conf /etc/resolv.conf
+COPY manifests/minikube/resolv.conf /etc/resolv.conf
 
 RUN go build -o persistlogs pkg/main/main.go
 
